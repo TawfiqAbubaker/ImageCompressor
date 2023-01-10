@@ -16,5 +16,6 @@ module.exports = {
       indie : ['Indie Flower', 'cursive'],
     }
   },
-  plugins: [],
+  plugins: [require("daisyui")],
+
 }

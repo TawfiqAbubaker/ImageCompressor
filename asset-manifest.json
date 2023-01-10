@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ImageCompressor/static/css/main.220059dd.css",
+    "main.js": "/ImageCompressor/static/js/main.bca69af0.js",
+    "index.html": "/ImageCompressor/index.html",
+    "main.220059dd.css.map": "/ImageCompressor/static/css/main.220059dd.css.map",
+    "main.bca69af0.js.map": "/ImageCompressor/static/js/main.bca69af0.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.220059dd.css",
+    "static/js/main.bca69af0.js"
+  ]
+}

@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/ImageCompressor/static/css/main.220059dd.css",
-    "main.js": "/ImageCompressor/static/js/main.bca69af0.js",
+    "main.css": "/ImageCompressor/static/css/main.837a427f.css",
+    "main.js": "/ImageCompressor/static/js/main.1f8281d0.js",
     "index.html": "/ImageCompressor/index.html",
-    "main.220059dd.css.map": "/ImageCompressor/static/css/main.220059dd.css.map",
-    "main.bca69af0.js.map": "/ImageCompressor/static/js/main.bca69af0.js.map"
+    "main.837a427f.css.map": "/ImageCompressor/static/css/main.837a427f.css.map",
+    "main.1f8281d0.js.map": "/ImageCompressor/static/js/main.1f8281d0.js.map"
   },
   "entrypoints": [
-    "static/css/main.220059dd.css",
-    "static/js/main.bca69af0.js"
+    "static/css/main.837a427f.css",
+    "static/js/main.1f8281d0.js"
   ]
 }

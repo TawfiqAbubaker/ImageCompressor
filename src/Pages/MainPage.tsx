@@ -98,6 +98,13 @@ export const MainPage = () => {
             <div className="text-big text-center font-inria">
                 Image Compressor
             </div>
+            <div className="mt-12">
+                <div className="text-center">
+                    <p className="inline text-red-500">Note :</p> This website works in local when running the React and Spring Apps.
+                    <br/>
+                    I am in the process of deploying the SpringBoot api on Heroku and will update it shortly.
+                </div>
+            </div>
             <div className="mt-16">
                 <div className="text-center">
                     Compress {' '}

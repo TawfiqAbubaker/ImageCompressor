@@ -19,13 +19,14 @@ export const MainPage = () => {
         if (e.target.files) {
             console.log(e.target.files[0]);
             const nameArray = e.target.files[0].name.split('.');
-            if(nameArray[nameArray.length-1] === 'jpeg'
-                || nameArray[nameArray.length-1] === 'jpg'
-                || nameArray[nameArray.length-1] === 'png')
+            let name = nameArray[nameArray.length-1].toLowerCase();
+            if(name === 'jpeg'
+                || name === 'jpg'
+                || name === 'png')
             {
-                if (nameArray[nameArray.length-1] === 'jpeg') setFileType("true");
-                if (nameArray[nameArray.length-1] === 'jpg') setFileType("true");
-                if (nameArray[nameArray.length-1] === 'png') setFileType("false");
+                if (name === 'jpeg') setFileType("true");
+                if (name === 'jpg') setFileType("true");
+                if (name === 'png') setFileType("false");
                 setFile(e.target.files[0]);
                 let temp = sizes;
                 temp[0] = formatBytes(e.target.files[0].size); 
@@ -48,10 +49,19 @@ export const MainPage = () => {
             return;
         }
         let data = new FormData();
+        let temp = compressionValue;
+        let compressionValueFloat = "0."+temp.toString();
+        if(temp == 1) compressionValueFloat = "0.7";
+        if(temp == 2) compressionValueFloat = "0.5";
+        if(temp == 3) compressionValueFloat = "0.3";
+        if(temp == 4) compressionValueFloat = "0.1";
+        if(temp == 5) compressionValueFloat = "0.05";
+        if(temp == 6) compressionValueFloat = "0.01";
         data.append('file', file, file.name);
         data.append('type', fileType as string);
+        data.append('force', compressionValueFloat)
 
-        axios.post('http://localhost:8080/compress', data, {
+        axios.post('http://64.227.9.210/compress', data, {
             headers: { 'content-type': 'multipart/form-data' }
            }
         )
@@ -61,23 +71,16 @@ export const MainPage = () => {
         });
     };
     const getCompressedImage = () => {
-        fetch("http://localhost:8080/get-image?jpg="+fileType)
+        fetch("http://64.227.9.210/get-image?jpg="+fileType)
         .then(data => data.blob().then(blobResponse => {
             setPhotoBlob(blobResponse);
             let temp: string[] = sizes;
             temp[1] = formatBytes(blobResponse.size); 
             console.log('TempSize', temp);
             setSizes(temp)
-            // deletedCompressedImage();
         }))
     }
-    const deletedCompressedImage = () => {
-        let fileTypeBoolean = fileType==="true" ? true : false
-        fetch("http://localhost:8080/get-image?jpg="+fileType, { method: 'DELETE' })
-        .then(response => {
-            console.log('delete response is ', response.json())
-        })
-    }
+
     function formatBytes(bytes : number, decimals = 2) {
         if (!+bytes) return '0 Bytes'
     
@@ -98,74 +101,98 @@ export const MainPage = () => {
             <div className="text-big text-center font-inria">
                 Image Compressor
             </div>
-            <div className="mt-12">
-                <div className="text-center">
-                    <p className="inline text-red-500">Note :</p> This website works in local when running the React and Spring Apps.
-                    <br/>
-                    I am in the process of deploying the SpringBoot api on Heroku and will update it shortly.
+            <div className="mt-6">
+                <div className="text-center text-sm">
+                    <p className="inline text-red-500">Note :</p> This website
+                    sends the image to my containerized Spring boot compressor API that I deployed to a linux server. 
                 </div>
             </div>
-            <div className="mt-16">
+            <div className="mt-6">
                 <div className="text-center">
-                    Compress {' '}
-                    <u className="text-blou">JPG</u>
-                    , <u className="text-blou">JPEG</u>{' '}
-                    {/* or <u className="text-blou">PNG</u> {' '} */}
+                    Compress <u className="text-blou">JPG</u>,{" "}
+                    <u className="text-blou">JPEG</u>{" "}
                     with the best quality and compression.
                     <br />
                     Reduce the file size of your images with a few clicks.
                 </div>
             </div>
-            {!submitButton ? 
-            <div className="flex justify-center mt-12">
-                <label>
-                    <input onChange={handleFileChange} type="file" className="text-sm text-grey-500
+            {!submitButton ? (
+                <div className="flex justify-center mt-12">
+                    <label>
+                        <input
+                            onChange={handleFileChange}
+                            type="file"
+                            className="text-sm text-grey-500
                         file:mr-8 file:py-2 file:px-8
                         file:rounded-lg file:border-0
                          file:font-medium
                         file:bg-blou file:text-white
                         hover:file:cursor-pointer hover:file:bg-blou_light
-                    " 
-                    />
-                </label>
-            </div>
-            :""}
-            {fileTypeError? 
-            <div className="text-center text-red-600 mt-5">
-                Unsupported file type, please upload a .jpg or .jpeg
-            </div>
-             : ""}
-            {submitButton ? 
-             <div className = "flex-col mt-12">
-                <div className="flex-col mb-5">
-                    <div className="flex justify-center mb-2">
-                        <p>Compression amount : {compressionValue}</p>
+                    "
+                        />
+                    </label>
+                </div>
+            ) : (
+                ""
+            )}
+            {fileTypeError ? (
+                <div className="text-center text-red-600 mt-5">
+                    Unsupported file type, please upload a .jpg or .jpeg
+                </div>
+            ) : (
+                ""
+            )}
+            {submitButton ? (
+                <div className="flex-col mt-12">
+                    <div className="flex-col mb-5">
+                        <div className="flex justify-center mb-2">
+                            <p>Compression amount : {compressionValue}</p>
+                        </div>
+                        <div className="flex justify-center">
+                            <input
+                                type="range"
+                                min="1"
+                                max="6"
+                                value={compressionValue}
+                                onChange={handleCompressionSlider}
+                                className="range range-xs w-56"
+                            />
+                        </div>
                     </div>
                     <div className="flex justify-center">
-                        <input type="range" min="1" max="10" value={compressionValue}  onChange={handleCompressionSlider}  className="range range-xs w-56" />
+                        <button
+                            className="bg-blou hover:bg-blou_ligth text-white text-xl font-bold font-indie py-2 px-8 rounded"
+                            onClick={handleCompressClick}
+                        >
+                            Compress !
+                        </button>
                     </div>
                 </div>
-                <div className="flex justify-center">
-                    <button className="bg-blou hover:bg-blou_ligth text-white text-xl font-bold font-indie py-2 px-8 rounded" onClick={handleCompressClick}>Compress !</button>
-                </div>
-            </div>
-            :
-            ""
-            }
+            ) : (
+                ""
+            )}
             <div className="imageComparor flex flex-col justify-center mt-10">
-                
-                {photoBlob?
-                <div className="flex flex-col">
-                    <div className="flex justify-center">
-                        <p>{sizes[0]} {' => '} {sizes[1]}</p>
+                {photoBlob ? (
+                    <div className="flex flex-col">
+                        <div className="flex justify-center mb-2">
+                            <p>
+                                {sizes[0]} {" ➡️ "} {sizes[1]}
+                            </p>
+                        </div>
+                        <div className="flex justify-center mb-2">
+                            <p>Right click ⤵️ and download!</p>
+                        </div>
+                        <div className="h-56 flex justify-center">
+                            <img
+                                src={webkitURL.createObjectURL(photoBlob)}
+                                className="h-56 w-auto"
+                                alt=""
+                            />
+                        </div>
                     </div>
-                    <div className="h-56 flex justify-center">
-                        <img src={webkitURL.createObjectURL(photoBlob)} className="h-56 w-auto" alt="" />
-                    </div>
-                </div>
-                :
-                <></>
-            }
+                ) : (
+                    <></>
+                )}
             </div>
         </div>
     );
